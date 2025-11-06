@@ -1,6 +1,7 @@
 # Twitter X Unfollower Tool
 
-<img width="992" height="655" alt="twitter-unfollower-tool" src="https://github.com/user-attachments/assets/a44e3ccb-04b5-4f0d-944c-0debc2e08ce3" />
+<img width="992" height="655" alt="twitter-unfollower-tool" src="https://github.com/user-attachments/assets/2671c935-df7d-4baa-9b89-d2efcb069337" />
+
 
 A **completely offline** tool to find who doesn’t follow you back on Twitter X.
 
