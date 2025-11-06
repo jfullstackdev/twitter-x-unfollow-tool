@@ -1,4 +1,4 @@
-# Twitter X Unfollower Tool
+# Twitter X Unfollow Tool
 
 <img width="992" height="655" alt="twitter-unfollower-tool" src="https://github.com/user-attachments/assets/2671c935-df7d-4baa-9b89-d2efcb069337" />
 
