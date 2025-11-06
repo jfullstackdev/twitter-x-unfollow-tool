@@ -74,8 +74,16 @@ You’ll see a list of accounts you follow who don’t follow you back, displaye
 > **Note:** Results show `User ID: 1234567890` instead of `@username` because Twitter archives only contain account IDs.
 > The links still work perfectly!
 
-> **Important:** Twitter may detect bulk unfollow actions.
-  To stay safe, unfollow slowly — around **25 users at a time**, then pause before continuing.
+> **Important:**
+>
+> * Twitter may detect bulk unfollow actions. To stay safe,
+>   unfollow slowly, around **25 users at a time**, then pause before continuing.
+> * Opening **too many profile tabs** at once also counts as activity.
+>   If pages stop loading or only show the **“X” icon**, it means you’ve
+>   hit a temporary rate limit, wait a bit before continuing.
+> * Since this tool uses **static archive data**, you might sometimes open
+>   a profile that now follows you back. That’s perfectly normal,
+>   it just means the user started following you **after your archive was generated**.
 
 ---
 
