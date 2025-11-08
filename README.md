@@ -76,11 +76,14 @@ You’ll see a list of accounts you follow who don’t follow you back, displaye
 
 > **Important:**
 >
-> * Twitter may detect bulk unfollow actions. To stay safe,
+> * Twitter detects bulk unfollow actions. To stay safe,
 >   unfollow slowly, around **25 users at a time**, then pause before continuing.
 > * Opening **too many profile tabs** at once also counts as activity.
 >   If pages stop loading or only show the **“X” icon**, it means you’ve
 >   hit a temporary rate limit, wait a bit before continuing.
+>   I noticed after opening the first 25 to unfollow, I will have this limit,
+>   so I'll wait several minutes then just reload them, but I'm not closing the
+>   entire Chrome.
 > * Since this tool uses **static archive data**, you might sometimes open
 >   a profile that now follows you back. That’s perfectly normal,
 >   it just means the user started following you **after your archive was generated**.
