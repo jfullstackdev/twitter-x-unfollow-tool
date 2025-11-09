@@ -207,8 +207,12 @@
         const followingIds = new Set(following.map(f => f.following.accountId));
 
         // Find differences
-        const notFollowingBack = following.filter(f => !followerIds.has(f.following.accountId));
-        const youDontFollow = followers.filter(f => !followingIds.has(f.follower.accountId));
+        const notFollowingBack = following.filter(
+          f => !followerIds.has(f.following.accountId)
+        );
+        const youDontFollow = followers.filter(
+          f => !followingIds.has(f.follower.accountId)
+        );
 
         // Sort alphabetically by screen name
         notFollowingBack.sort((a, b) => {
@@ -224,28 +228,36 @@
         });
 
         // Build HTML output
-        let html = `<div class="stats">
-  <strong>📊 Your Stats:</strong><br>
-  Following: ${following.length} • Followers: ${followers.length} • Mutual: ${following.length - notFollowingBack.length}
-</div>`;
+        let html = `
+          <div class="stats">
+            <strong>📊 Your Stats:</strong><br>
+            Following: ${following.length} • Followers: ${followers.length} • Mutual: ${
+              following.length - notFollowingBack.length
+            }
+          </div>
+        `;
 
         html += `<h2>❌ Not Following Back (${notFollowingBack.length})</h2>`;
-        html += `<p style="font-size: 0.85em; color: #666; margin-bottom: 1em;">Showing User IDs (Twitter/X no longer provides handles in archives)</p>`;
+        html += `
+          <p style="font-size: 0.85em; color: #666; margin-bottom: 1em;">
+            Showing User IDs (Twitter/X no longer provides handles in archives)
+          </p>
+        `;
 
         if (notFollowingBack.length === 0) {
           html += `<p>Everyone you follow follows you back! 🎉</p>`;
         } else {
           html += `
-<table>
-  <thead>
-    <tr>
-      <th class="index-col">#</th>
-      <th>User ID</th>
-      <th class="action-col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-`;
+            <table>
+              <thead>
+                <tr>
+                  <th class="index-col">#</th>
+                  <th>User ID</th>
+                  <th class="action-col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
 
           notFollowingBack.forEach((f, index) => {
             const acc = f.following;
@@ -253,20 +265,20 @@
             const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
 
             html += `
-    <tr>
-      <td class="index-col">${index + 1}</td>
-      <td><a href="${url}" target="_blank">${displayName}</a></td>
-      <td class="action-col">
-        <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
-      </td>
-    </tr>
-`;
+                <tr>
+                  <td class="index-col">${index + 1}</td>
+                  <td><a href="${url}" target="_blank">${displayName}</a></td>
+                  <td class="action-col">
+                    <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
+                  </td>
+                </tr>
+            `;
           });
 
           html += `
-  </tbody>
-</table>
-`;
+              </tbody>
+            </table>
+          `;
         }
 
         resultDiv.innerHTML = html;
