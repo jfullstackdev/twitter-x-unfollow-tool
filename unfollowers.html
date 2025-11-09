@@ -1,258 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Twitter Unfollowers (Offline Tool)</title>
-<style>
-  body {
-    font-family: system-ui, sans-serif;
-    background: #67B26F;
-    background: -webkit-linear-gradient(left, #4ca2cd, #67B26F);
-    background: linear-gradient(90deg, #4ca2cd, #67B26F);
-    min-height: 100vh;
-    padding: 2em;
-    margin: 0;
-  }
-  .container {
-    max-width: 900px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    padding: 2em;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  }
-  h1 { 
-    text-align: center;
-    color: #333;
-    margin-top: 0;
-  }
-  input, button {
-    display: block;
-    margin: 1em 0;
-  }
-  button {
-    padding: 0.6em 1.2em;
-    background: #0078d4;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  button:hover { background: #005fa3; }
-  button:disabled { 
-    background: #ccc; 
-    cursor: not-allowed; 
-  }
-  .result {
-    margin-top: 2em;
-    padding: 1.2em;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .stats {
-    background: #e3f2fd;
-    padding: 1em;
-    border-radius: 6px;
-    margin-bottom: 1.5em;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1em;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  thead {
-    background: #0078d4;
-  }
-  th {
-    padding: 0.8em;
-    text-align: left;
-    font-weight: 600;
-    border: 1px solid #005fa3;
-    color: #222;
-  }
-  td {
-    padding: 0.7em 0.8em;
-    border: 1px solid #d0d0d0;
-    color: #222;
-  }
-  tr:nth-child(even) {
-    background: #f5f5f5;
-  }
-  tr:nth-child(odd) {
-    background: #ffffff;
-  }
-  tbody tr:hover {
-    background: #e3f2fd;
-  }
-  tbody td {
-    color: #222;
-  }
-  .index-col {
-    width: 60px;
-    text-align: center;
-    font-weight: 500;
-  }
-  tbody .index-col {
-    color: #666;
-  }
-  .action-col {
-    width: 120px;
-    text-align: center;
-  }
-  .error {
-    color: #d32f2f;
-    background: #ffebee;
-    padding: 1em;
-    border-radius: 6px;
-  }
-</style>
-</head>
-<body>
-<div class="container">
-  <h1>🐦 Twitter X Unfollowers (Offline)</h1>
-  <p>Select your Twitter archive files below:</p>
-  <p style="font-size: 0.9em; color: #666; margin-top: -0.5em;">
-    <em>Note: Twitter/X archives only include User IDs, not handles. Click links to see profiles.</em>
-  </p>
-  <label>Follower file (follower.js):</label>
-  <input type="file" id="followersFile" accept=".js" />
-  <label>Following file (following.js):</label>
-  <input type="file" id="followingFile" accept=".js" />
-  <button id="analyzeBtn">Analyze</button>
-
-  <div class="result" id="result"></div>
-</div>
-
-<script>
-function copyUrl(url, button) {
-  navigator.clipboard.writeText(url).then(() => {
-    const originalText = button.textContent;
-    button.textContent = 'Copied!';
-    button.classList.add('copied');
-    setTimeout(() => {
-      button.textContent = originalText;
-      button.classList.remove('copied');
-    }, 2000);
-  }).catch(err => {
-    alert('Failed to copy: ' + err);
-  });
-}
-
-async function loadFile(fileInput) {
-  return new Promise((resolve, reject) => {
-    const file = fileInput.files[0];
-    if (!file) return reject("No file selected");
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const text = reader.result;
-        // Twitter archive format: window.YTD.follower.part0 = [...]
-        const jsonText = text.substring(text.indexOf("=") + 1).trim();
-        const data = JSON.parse(jsonText);
-        resolve(data);
-      } catch (err) {
-        reject("Invalid file format. Make sure it's a valid Twitter archive .js file.");
-      }
-    };
-    reader.onerror = () => reject("Error reading file");
-    reader.readAsText(file);
-  });
-}
-
-document.getElementById("analyzeBtn").onclick = async () => {
-  const followersInput = document.getElementById("followersFile");
-  const followingInput = document.getElementById("followingFile");
-  const resultDiv = document.getElementById("result");
-  const analyzeBtn = document.getElementById("analyzeBtn");
-  
-  // Reset state
-  resultDiv.innerHTML = "<p>Processing...</p>";
-  analyzeBtn.disabled = true;
-  analyzeBtn.textContent = "Processing...";
-
-  try {
-    const followers = await loadFile(followersInput);
-    const following = await loadFile(followingInput);
-
-    // Extract account IDs
-    const followerIds = new Set(followers.map(f => f.follower.accountId));
-    const followingIds = new Set(following.map(f => f.following.accountId));
-
-    // Find differences
-    const notFollowingBack = following.filter(f => !followerIds.has(f.following.accountId));
-    const youDontFollow = followers.filter(f => !followingIds.has(f.follower.accountId));
-
-    // Sort alphabetically by screen name
-    notFollowingBack.sort((a, b) => {
-      const nameA = a.following.screenName || a.following.accountId;
-      const nameB = b.following.screenName || b.following.accountId;
-      return nameA.localeCompare(nameB);
-    });
-    
-    youDontFollow.sort((a, b) => {
-      const nameA = a.follower.screenName || a.follower.accountId;
-      const nameB = b.follower.screenName || b.follower.accountId;
-      return nameA.localeCompare(nameB);
-    });
-
-    // Build HTML output
-    let html = `<div class="stats">
-      <strong>📊 Your Stats:</strong><br>
-      Following: ${following.length} • Followers: ${followers.length} • Mutual: ${following.length - notFollowingBack.length}
-    </div>`;
-
-    html += `<h2>❌ Not Following Back (${notFollowingBack.length})</h2>`;
-    html += `<p style="font-size: 0.85em; color: #666; margin-bottom: 1em;">Showing User IDs (Twitter/X no longer provides handles in archives)</p>`;
-    if (notFollowingBack.length === 0) {
-      html += `<p>Everyone you follow follows you back! 🎉</p>`;
-    } else {
-      html += `
-        <table>
-          <thead>
-            <tr>
-              <th class="index-col">#</th>
-              <th>User ID</th>
-              <th class="action-col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      
-      notFollowingBack.forEach((f, index) => {
-        const acc = f.following;
-        const url = acc.screenName ? `https://x.com/${acc.screenName}` : `https://x.com/i/user/${acc.accountId}`;
-        const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
-        
-        html += `
-          <tr>
-            <td class="index-col">${index + 1}</td>
-            <td><a href="${url}" target="_blank">${displayName}</a></td>
-            <td class="action-col">
-              <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
-            </td>
-          </tr>
-        `;
-      });
-      
-      html += `
-          </tbody>
-        </table>
-      `;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitter Unfollowers (Offline Tool)</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #67B26F;
+      background: -webkit-linear-gradient(left, #4ca2cd, #67B26F);
+      background: linear-gradient(90deg, #4ca2cd, #67B26F);
+      min-height: 100vh;
+      padding: 2em;
+      margin: 0;
     }
 
-    resultDiv.innerHTML = html;
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 2em;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
 
-  } catch (err) {
-    resultDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${err}</div>`;
-  } finally {
-    analyzeBtn.disabled = false;
-    analyzeBtn.textContent = "Analyze";
-  }
-};
-</script>
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 0;
+    }
+
+    input, button {
+      display: block;
+      margin: 1em 0;
+    }
+
+    button {
+      padding: 0.6em 1.2em;
+      background: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover { 
+      background: #005fa3; 
+    }
+
+    button:disabled { 
+      background: #ccc; 
+      cursor: not-allowed; 
+    }
+
+    .result {
+      margin-top: 2em;
+      padding: 1.2em;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .stats {
+      background: #e3f2fd;
+      padding: 1em;
+      border-radius: 6px;
+      margin-bottom: 1.5em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    thead {
+      background: #0078d4;
+    }
+
+    th {
+      padding: 0.8em;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #005fa3;
+      color: #222;
+    }
+
+    td {
+      padding: 0.7em 0.8em;
+      border: 1px solid #d0d0d0;
+      color: #222;
+    }
+
+    tr:nth-child(even) {
+      background: #f5f5f5;
+    }
+
+    tr:nth-child(odd) {
+      background: #ffffff;
+    }
+
+    tbody tr:hover {
+      background: #e3f2fd;
+    }
+
+    tbody td {
+      color: #222;
+    }
+
+    .index-col {
+      width: 60px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    tbody .index-col {
+      color: #666;
+    }
+
+    .action-col {
+      width: 120px;
+      text-align: center;
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 1em;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐦 Twitter X Unfollowers (Offline)</h1>
+    <p>Select your Twitter archive files below:</p>
+    <p style="font-size: 0.9em; color: #666; margin-top: -0.5em;">
+      <em>Note: Twitter/X archives only include User IDs, not handles. Click links to see profiles.</em>
+    </p>
+
+    <label>Follower file (follower.js):</label>
+    <input type="file" id="followersFile" accept=".js" />
+
+    <label>Following file (following.js):</label>
+    <input type="file" id="followingFile" accept=".js" />
+
+    <button id="analyzeBtn">Analyze</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function copyUrl(url, button) {
+      navigator.clipboard.writeText(url).then(() => {
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        alert('Failed to copy: ' + err);
+      });
+    }
+
+    async function loadFile(fileInput) {
+      return new Promise((resolve, reject) => {
+        const file = fileInput.files[0];
+        if (!file) return reject("No file selected");
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const text = reader.result;
+            // Twitter archive format: window.YTD.follower.part0 = [...]
+            const jsonText = text.substring(text.indexOf("=") + 1).trim();
+            const data = JSON.parse(jsonText);
+            resolve(data);
+          } catch (err) {
+            reject("Invalid file format. Make sure it's a valid Twitter archive .js file.");
+          }
+        };
+        reader.onerror = () => reject("Error reading file");
+        reader.readAsText(file);
+      });
+    }
+
+    document.getElementById("analyzeBtn").onclick = async () => {
+      const followersInput = document.getElementById("followersFile");
+      const followingInput = document.getElementById("followingFile");
+      const resultDiv = document.getElementById("result");
+      const analyzeBtn = document.getElementById("analyzeBtn");
+
+      // Reset state
+      resultDiv.innerHTML = "<p>Processing...</p>";
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Processing...";
+
+      try {
+        const followers = await loadFile(followersInput);
+        const following = await loadFile(followingInput);
+
+        // Extract account IDs
+        const followerIds = new Set(followers.map(f => f.follower.accountId));
+        const followingIds = new Set(following.map(f => f.following.accountId));
+
+        // Find differences
+        const notFollowingBack = following.filter(f => !followerIds.has(f.following.accountId));
+        const youDontFollow = followers.filter(f => !followingIds.has(f.follower.accountId));
+
+        // Sort alphabetically by screen name
+        notFollowingBack.sort((a, b) => {
+          const nameA = a.following.screenName || a.following.accountId;
+          const nameB = b.following.screenName || b.following.accountId;
+          return nameA.localeCompare(nameB);
+        });
+
+        youDontFollow.sort((a, b) => {
+          const nameA = a.follower.screenName || a.follower.accountId;
+          const nameB = b.follower.screenName || b.follower.accountId;
+          return nameA.localeCompare(nameB);
+        });
+
+        // Build HTML output
+        let html = `<div class="stats">
+  <strong>📊 Your Stats:</strong><br>
+  Following: ${following.length} • Followers: ${followers.length} • Mutual: ${following.length - notFollowingBack.length}
+</div>`;
+
+        html += `<h2>❌ Not Following Back (${notFollowingBack.length})</h2>`;
+        html += `<p style="font-size: 0.85em; color: #666; margin-bottom: 1em;">Showing User IDs (Twitter/X no longer provides handles in archives)</p>`;
+
+        if (notFollowingBack.length === 0) {
+          html += `<p>Everyone you follow follows you back! 🎉</p>`;
+        } else {
+          html += `
+<table>
+  <thead>
+    <tr>
+      <th class="index-col">#</th>
+      <th>User ID</th>
+      <th class="action-col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+
+          notFollowingBack.forEach((f, index) => {
+            const acc = f.following;
+            const url = acc.screenName ? `https://x.com/${acc.screenName}` : `https://x.com/i/user/${acc.accountId}`;
+            const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
+
+            html += `
+    <tr>
+      <td class="index-col">${index + 1}</td>
+      <td><a href="${url}" target="_blank">${displayName}</a></td>
+      <td class="action-col">
+        <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
+      </td>
+    </tr>
+`;
+          });
+
+          html += `
+  </tbody>
+</table>
+`;
+        }
+
+        resultDiv.innerHTML = html;
+
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${err}</div>`;
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analyze";
+      }
+    };
+  </script>
 </body>
-</html>
 </html>
