@@ -66,6 +66,10 @@
       padding: 1em;
       border-radius: 6px;
       margin-bottom: 1.5em;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     table {
@@ -230,18 +234,20 @@
         // Build HTML output
         let html = `
           <div class="stats">
-            <strong>📊 Your Stats:</strong><br>
-            Following: ${following.length} • Followers: ${followers.length} • Mutual: ${
-              following.length - notFollowingBack.length
-            }
+            <h2 style="margin: 0 0 0.8em 0; font-size: 1.3em; color: #333;">🐦 Twitter X Unfollowers (Offline)</h2>
+            <div style="font-size: 1em; margin-bottom: 0.8em;">
+              <strong>📊 Your Stats:</strong><br>
+              Following: ${following.length} • Followers: ${followers.length} • Mutual: ${
+                following.length - notFollowingBack.length
+              }
+            </div>
+            <div style="font-size: 1em; margin-bottom: 0.3em;">
+              <strong>❌ Not Following Back (${notFollowingBack.length})</strong>
+            </div>
+            <div style="font-size: 0.9em; color: #666;">
+              Showing User IDs (Twitter/X no longer provides handles in archives)
+            </div>
           </div>
-        `;
-
-        html += `<h2>❌ Not Following Back (${notFollowingBack.length})</h2>`;
-        html += `
-          <p style="font-size: 0.85em; color: #666; margin-bottom: 1em;">
-            Showing User IDs (Twitter/X no longer provides handles in archives)
-          </p>
         `;
 
         if (notFollowingBack.length === 0) {
