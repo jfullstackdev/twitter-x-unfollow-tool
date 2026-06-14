@@ -19,9 +19,9 @@
       max-width: 900px;
       margin: auto;
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 2em;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      box-shadow: 0 24px 70px rgba(15,23,42,0.18);
     }
 
     h1 {
@@ -35,70 +35,119 @@
       margin: 1em 0;
     }
 
+    input[type="file"] {
+      width: 100%;
+      max-width: 460px;
+      padding: 0.7em;
+      border: 1px solid #d7dee8;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #1f2937;
+    }
+
     button {
-      padding: 0.6em 1.2em;
-      background: #0078d4;
+      padding: 0.65em 1.1em;
+      background: #111827;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 999px;
       cursor: pointer;
+      font-weight: 650;
+      letter-spacing: 0;
+      box-shadow: 0 10px 22px rgba(17,24,39,0.18);
+      transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     button:hover { 
-      background: #005fa3; 
+      background: #0f172a;
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(17,24,39,0.22);
     }
 
     button:disabled { 
-      background: #ccc; 
+      background: #cbd5e1;
+      color: #64748b;
       cursor: not-allowed; 
+      box-shadow: none;
+      transform: none;
     }
 
     .result {
       margin-top: 2em;
-      padding: 1.2em;
+      padding: 0;
       background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      box-shadow: 0 14px 32px rgba(15,23,42,0.08);
+    }
+
+    .result > p {
+      margin: 0;
+      padding: 1.2em;
     }
 
     .stats {
-      background: #e3f2fd;
-      padding: 1em;
-      border-radius: 6px;
+      background: rgba(248,250,252,0.96);
+      padding: 1em 1.2em;
+      border-bottom: 1px solid #e5e7eb;
+      border-radius: 14px 14px 0 0;
       margin-bottom: 1.5em;
       position: sticky;
-      top: 0;
+      top: 0.75em;
       z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 12px 24px rgba(15,23,42,0.10);
+      backdrop-filter: blur(10px);
+    }
+
+    .table-wrap {
+      overflow-x: visible;
+      padding: 0 1.2em 1.2em;
     }
 
     table {
       width: 100%;
+      min-width: 620px;
       border-collapse: collapse;
-      margin-top: 1em;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-top: 0;
+      font-size: 0.95rem;
     }
 
     thead {
-      background: #0078d4;
+      background: #111827;
     }
 
     th {
-      padding: 0.8em;
+      position: sticky;
+      top: 8.5em;
+      z-index: 80;
+      padding: 0.85em 1em;
       text-align: left;
-      font-weight: 600;
-      border: 1px solid #005fa3;
-      color: #222;
+      font-size: 0.78rem;
+      font-weight: 750;
+      text-transform: uppercase;
+      color: #f8fafc;
+      letter-spacing: 0;
+      background: #111827;
+      border: 0;
+    }
+
+    th:first-child {
+      border-radius: 10px 0 0 10px;
+    }
+
+    th:last-child {
+      border-radius: 0 10px 10px 0;
     }
 
     td {
-      padding: 0.7em 0.8em;
-      border: 1px solid #d0d0d0;
-      color: #222;
+      padding: 0.85em 1em;
+      border: 0;
+      border-bottom: 1px solid #edf2f7;
+      color: #1f2937;
     }
 
     tr:nth-child(even) {
-      background: #f5f5f5;
+      background: #fbfdff;
     }
 
     tr:nth-child(odd) {
@@ -106,11 +155,15 @@
     }
 
     tbody tr:hover {
-      background: #e3f2fd;
+      background: #f1f7ff;
     }
 
     tbody td {
-      color: #222;
+      color: #1f2937;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
     }
 
     .index-col {
@@ -120,19 +173,67 @@
     }
 
     tbody .index-col {
-      color: #666;
+      color: #64748b;
     }
 
     .action-col {
-      width: 120px;
+      width: 140px;
       text-align: center;
+    }
+
+    .copy-btn {
+      display: inline-block;
+      margin: 0;
+      padding: 0.5em 0.85em;
+      background: #f8fafc;
+      color: #111827;
+      border: 1px solid #d7dee8;
+      box-shadow: none;
+      font-size: 0.86rem;
+    }
+
+    .copy-btn:hover {
+      background: #eef6ff;
+      color: #1d4ed8;
+      border-color: #b9d7ff;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .copy-btn.copied {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
     }
 
     .error {
       color: #d32f2f;
       background: #ffebee;
+      margin: 1.2em;
       padding: 1em;
       border-radius: 6px;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 1em;
+      }
+
+      .container {
+        padding: 1.2em;
+      }
+
+      .stats {
+        top: 0.5em;
+      }
+
+      th {
+        top: 9.5em;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
@@ -254,15 +355,16 @@
           html += `<p>Everyone you follow follows you back! 🎉</p>`;
         } else {
           html += `
-            <table>
-              <thead>
-                <tr>
-                  <th class="index-col">#</th>
-                  <th>User ID</th>
-                  <th class="action-col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="index-col">#</th>
+                    <th>User ID</th>
+                    <th class="action-col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
           `;
 
           notFollowingBack.forEach((f, index) => {
@@ -282,8 +384,9 @@
           });
 
           html += `
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
           `;
         }
 
