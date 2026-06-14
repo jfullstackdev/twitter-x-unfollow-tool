@@ -206,6 +206,29 @@
       border-color: #a7f3d0;
     }
 
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      padding: 0 1.2em 1em;
+      color: #475569;
+      font-size: 0.92rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 0.5em;
+      margin-left: auto;
+    }
+
+    .pagination button {
+      margin: 0;
+      padding: 0.5em 0.9em;
+      box-shadow: none;
+      font-size: 0.86rem;
+    }
+
     .error {
       color: #d32f2f;
       background: #ffebee;
@@ -234,6 +257,15 @@
       .table-wrap {
         overflow-x: auto;
       }
+
+      .pagination {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .pagination-controls {
+        margin-left: 0;
+      }
     }
   </style>
 </head>
@@ -257,6 +289,11 @@
   </div>
 
   <script>
+    const PAGE_SIZE = 250;
+    let currentPage = 1;
+    let currentResults = [];
+    let currentStats = null;
+
     function copyUrl(url, button) {
       navigator.clipboard.writeText(url).then(() => {
         const originalText = button.textContent;
@@ -290,6 +327,94 @@
         reader.onerror = () => reject("Error reading file");
         reader.readAsText(file);
       });
+    }
+
+    function changePage(page) {
+      const totalPages = Math.ceil(currentResults.length / PAGE_SIZE);
+      currentPage = Math.min(Math.max(page, 1), totalPages);
+      renderResults();
+      document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function renderResults() {
+      const resultDiv = document.getElementById("result");
+      const { followers, following, mutuals } = currentStats;
+      const totalPages = Math.ceil(currentResults.length / PAGE_SIZE);
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const end = Math.min(start + PAGE_SIZE, currentResults.length);
+      const pageItems = currentResults.slice(start, end);
+
+      let html = `
+        <div class="stats">
+          <h2 style="margin: 0 0 0.8em 0; font-size: 1.3em; color: #333;">🐦 Twitter X Unfollowers (Offline)</h2>
+          <div style="font-size: 1em; margin-bottom: 0.8em;">
+            <strong>📊 Your Stats:</strong><br>
+            Following: ${following} • Followers: ${followers} • Mutual: ${mutuals}
+          </div>
+          <div style="font-size: 1em; margin-bottom: 0.3em;">
+            <strong>❌ Not Following Back (${currentResults.length})</strong>
+          </div>
+          <div style="font-size: 0.9em; color: #666;">
+            Showing User IDs (Twitter/X no longer provides handles in archives)
+          </div>
+        </div>
+      `;
+
+      if (currentResults.length === 0) {
+        resultDiv.innerHTML = html + `<p>Everyone you follow follows you back! 🎉</p>`;
+        return;
+      }
+
+      html += `
+        <div class="pagination">
+          <div>Showing ${start + 1}-${end} of ${currentResults.length} • Page ${currentPage} of ${totalPages}</div>
+          <div class="pagination-controls">
+            <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>Previous</button>
+            <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="index-col">#</th>
+                <th>User ID</th>
+                <th class="action-col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      pageItems.forEach((f, index) => {
+        const acc = f.following;
+        const url = acc.screenName ? `https://x.com/${acc.screenName}` : `https://x.com/i/user/${acc.accountId}`;
+        const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
+
+        html += `
+            <tr>
+              <td class="index-col">${start + index + 1}</td>
+              <td><a href="${url}" target="_blank">${displayName}</a></td>
+              <td class="action-col">
+                <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
+              </td>
+            </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div>Showing ${start + 1}-${end} of ${currentResults.length} • Page ${currentPage} of ${totalPages}</div>
+          <div class="pagination-controls">
+            <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>Previous</button>
+            <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? "disabled" : ""}>Next</button>
+          </div>
+        </div>
+      `;
+
+      resultDiv.innerHTML = html;
     }
 
     document.getElementById("analyzeBtn").onclick = async () => {
@@ -332,65 +457,14 @@
           return nameA.localeCompare(nameB);
         });
 
-        // Build HTML output
-        let html = `
-          <div class="stats">
-            <h2 style="margin: 0 0 0.8em 0; font-size: 1.3em; color: #333;">🐦 Twitter X Unfollowers (Offline)</h2>
-            <div style="font-size: 1em; margin-bottom: 0.8em;">
-              <strong>📊 Your Stats:</strong><br>
-              Following: ${following.length} • Followers: ${followers.length} • Mutual: ${
-                following.length - notFollowingBack.length
-              }
-            </div>
-            <div style="font-size: 1em; margin-bottom: 0.3em;">
-              <strong>❌ Not Following Back (${notFollowingBack.length})</strong>
-            </div>
-            <div style="font-size: 0.9em; color: #666;">
-              Showing User IDs (Twitter/X no longer provides handles in archives)
-            </div>
-          </div>
-        `;
-
-        if (notFollowingBack.length === 0) {
-          html += `<p>Everyone you follow follows you back! 🎉</p>`;
-        } else {
-          html += `
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th class="index-col">#</th>
-                    <th>User ID</th>
-                    <th class="action-col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-          `;
-
-          notFollowingBack.forEach((f, index) => {
-            const acc = f.following;
-            const url = acc.screenName ? `https://x.com/${acc.screenName}` : `https://x.com/i/user/${acc.accountId}`;
-            const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
-
-            html += `
-                <tr>
-                  <td class="index-col">${index + 1}</td>
-                  <td><a href="${url}" target="_blank">${displayName}</a></td>
-                  <td class="action-col">
-                    <button class="copy-btn" onclick="copyUrl('${url}', this)">Copy URL</button>
-                  </td>
-                </tr>
-            `;
-          });
-
-          html += `
-                </tbody>
-              </table>
-            </div>
-          `;
-        }
-
-        resultDiv.innerHTML = html;
+        currentPage = 1;
+        currentResults = notFollowingBack;
+        currentStats = {
+          followers: followers.length,
+          following: following.length,
+          mutuals: following.length - notFollowingBack.length
+        };
+        renderResults();
 
       } catch (err) {
         resultDiv.innerHTML = `<div class="error"><strong>Error:</strong> ${err}</div>`;
