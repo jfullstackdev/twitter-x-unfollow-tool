@@ -22,10 +22,11 @@
     .container {
       max-width: 900px;
       margin: auto;
-      background: white;
+      background: #d7e4ea;
+      border: 1px solid rgba(173,191,203,0.9);
       border-radius: 16px;
       padding: 2em;
-      box-shadow: 0 24px 70px rgba(15,23,42,0.18);
+      box-shadow: 0 26px 80px rgba(15,23,42,0.24);
     }
 
     h1 {
@@ -43,29 +44,29 @@
       width: 100%;
       max-width: 460px;
       padding: 0.7em;
-      border: 1px solid #d7dee8;
+      border: 1px solid #adbfcb;
       border-radius: 10px;
-      background: #f8fafc;
+      background: #edf4f7;
       color: #1f2937;
     }
 
     button {
       padding: 0.65em 1.1em;
-      background: #111827;
+      background: #1d9bf0;
       color: white;
       border: none;
       border-radius: 999px;
       cursor: pointer;
       font-weight: 650;
       letter-spacing: 0;
-      box-shadow: 0 10px 22px rgba(17,24,39,0.18);
+      box-shadow: 0 10px 22px rgba(29,155,240,0.24);
       transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     button:hover { 
-      background: #0f172a;
+      background: #0c8de4;
       transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(17,24,39,0.22);
+      box-shadow: 0 14px 28px rgba(29,155,240,0.30);
     }
 
     button:disabled { 
@@ -79,10 +80,10 @@
     .result {
       margin-top: 2em;
       padding: 0;
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: #c8d6df;
+      border: 1px solid #adbfcb;
       border-radius: 14px;
-      box-shadow: 0 14px 32px rgba(15,23,42,0.08);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.14);
     }
 
     .result > p {
@@ -91,19 +92,30 @@
     }
 
     .stats {
-      background: rgba(248,250,252,0.96);
+      background: rgba(205,218,226,0.97);
       padding: 1em 1.2em;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #adbfcb;
       border-radius: 14px 14px 0 0;
       margin-bottom: 1.5em;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 12px 24px rgba(15,23,42,0.10);
+      box-shadow: 0 12px 28px rgba(15,23,42,0.16);
       backdrop-filter: blur(10px);
     }
 
+    .stats-title {
+      color: #1f2937;
+      font-size: 1.3em;
+      margin: 0 0 0.8em 0;
+    }
+
+    .stats-count {
+      color: #0969b3;
+    }
+
     .table-wrap {
+      background: #c8d6df;
       overflow-x: visible;
       padding: 0 1.2em 1.2em;
     }
@@ -117,7 +129,7 @@
     }
 
     thead {
-      background: #eef6ff;
+      background: #aebfcc;
     }
 
     th {
@@ -131,7 +143,7 @@
       text-transform: uppercase;
       color: #0f172a;
       letter-spacing: 0;
-      background: #eef6ff;
+      background: #aebfcc;
       border: 0;
     }
 
@@ -146,20 +158,20 @@
     td {
       padding: 0.45em 1em;
       border: 0;
-      border-bottom: 1px solid #edf2f7;
+      border-bottom: 1px solid #adbfcb;
       color: #1f2937;
     }
 
     tr:nth-child(even) {
-      background: #fbfdff;
+      background: #cddde5;
     }
 
     tr:nth-child(odd) {
-      background: #ffffff;
+      background: #dce8ee;
     }
 
     tbody tr:hover {
-      background: #f1f7ff;
+      background: #b8d8d4;
     }
 
     tbody td {
@@ -189,17 +201,17 @@
       display: inline-block;
       margin: 0;
       padding: 0.34em 0.7em;
-      background: #f8fafc;
+      background: #c9d9e1;
       color: #111827;
-      border: 1px solid #d7dee8;
+      border: 1px solid #8fa9b8;
       box-shadow: none;
       font-size: 0.86rem;
     }
 
     .copy-btn:hover {
-      background: #eef6ff;
-      color: #1d4ed8;
-      border-color: #b9d7ff;
+      background: #b9d2db;
+      color: #0f172a;
+      border-color: #6f93a5;
       box-shadow: none;
       transform: none;
     }
@@ -352,13 +364,13 @@
 
       let html = `
         <div class="stats">
-          <h2 style="margin: 0 0 0.8em 0; font-size: 1.3em; color: #333;">🐦 Twitter X Unfollowers (Offline)</h2>
+          <h2 class="stats-title">🐦 Twitter X Unfollowers (Offline)</h2>
           <div style="font-size: 1em; margin-bottom: 0.8em;">
             <strong>📊 Your Stats:</strong><br>
             Following: ${following} • Followers: ${followers} • Mutual: ${mutuals}
           </div>
           <div style="font-size: 1em; margin-bottom: 0.3em;">
-            <strong>❌ Not Following Back (${currentResults.length})</strong>
+            <strong>❌ Not Following Back <span class="stats-count">(${currentResults.length})</span></strong>
           </div>
           <div style="font-size: 0.9em; color: #666;">
             Showing User IDs (Twitter/X no longer provides handles in archives)
