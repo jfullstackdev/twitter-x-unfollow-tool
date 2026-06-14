@@ -23,6 +23,7 @@ Requesting a new archive isn’t instant either, as Twitter X takes time to gene
 * ✅ **No Login Required** – Uses your Twitter archive data
 * ✅ **Clickable Links** – Direct links to profiles
 * ✅ **Copy URLs** – One-click copy
+* ✅ **Paginated Results** – Browse large lists in pages of 250
 * ✅ **Fast** – Handles up to 50K followers smoothly *(expected but not yet tested)*
 
 ---
@@ -54,12 +55,12 @@ data/following.js
 #### **Option A: Local Use (Recommended)**
 
 1. Download `unfollowers.html` from this repository
-2. **Open Chrome where you’re logged into Twitter** *(important!)*
+2. **Open Chrome where you’re logged into Twitter/X** *(important!)*
 3. **Double-click** `unfollowers.html` or drag it into Chrome
 4. Upload both `follower.js` and `following.js`
 5. Click **Analyze**
-6. Click usernames to open profiles — they’ll open in the same browser session
-   (That’s why you must open it in the same Chrome profile where you’re logged in!)
+6. Click usernames to open profiles in a new tab from the same browser session
+   (That’s why you must open the tool in the same Chrome profile where you’re logged in!)
 
 ---
 
@@ -70,6 +71,7 @@ You’ll see a list of accounts you follow who don’t follow you back, displaye
 * **User IDs** (Twitter no longer includes handles in archives)
 * **Clickable profile links**
 * **Copy URL** buttons for convenience
+* **Pagination** with 250 results per page for smoother browsing
 
 > **Note:** Results show `User ID: 1234567890` instead of `@username` because Twitter archives only contain account IDs.
 > The links still work perfectly!
@@ -128,6 +130,7 @@ not even Node.js. Just edit the **HTML**, **CSS**, and **JavaScript**, then relo
 * Pure **HTML**, **CSS**, and **JavaScript**
 * No dependencies or frameworks
 * Uses the **FileReader API** for local file processing
+* Renders large result sets in pages of 250 rows
 * 100% client-side execution
 
 ---
@@ -138,6 +141,7 @@ The tool displays:
 
 * **Total Stats** – Following count, follower count, and mutuals
 * **Not Following Back** – List of User IDs for accounts that don’t follow you back
+* **Pagination** – Previous/Next controls with a visible result range
 * Each entry includes:
 
   * User ID (e.g., `User ID: 1234567890`)
