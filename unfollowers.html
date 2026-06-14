@@ -22,8 +22,8 @@
     .container {
       max-width: 900px;
       margin: auto;
-      background: #d7e4ea;
-      border: 1px solid rgba(173,191,203,0.9);
+      background: #d8e5ee;
+      border: 1px solid rgba(151,174,191,0.95);
       border-radius: 16px;
       padding: 2em;
       box-shadow: 0 26px 80px rgba(15,23,42,0.24);
@@ -35,6 +35,12 @@
       margin-top: 0;
     }
 
+    .archive-note {
+      color: #475569;
+      font-size: 0.9em;
+      margin-top: -0.5em;
+    }
+
     input, button {
       display: block;
       margin: 1em 0;
@@ -44,9 +50,9 @@
       width: 100%;
       max-width: 460px;
       padding: 0.7em;
-      border: 1px solid #adbfcb;
+      border: 1px solid #9eb5c6;
       border-radius: 10px;
-      background: #edf4f7;
+      background: #e1edf5;
       color: #1f2937;
     }
 
@@ -80,8 +86,8 @@
     .result {
       margin-top: 2em;
       padding: 0;
-      background: #c8d6df;
-      border: 1px solid #adbfcb;
+      background: #d3dfea;
+      border: 1px solid #9eb5c6;
       border-radius: 14px;
       box-shadow: 0 18px 40px rgba(15,23,42,0.14);
     }
@@ -92,9 +98,9 @@
     }
 
     .stats {
-      background: rgba(205,218,226,0.97);
-      padding: 1em 1.2em;
-      border-bottom: 1px solid #adbfcb;
+      background: rgba(203,218,229,0.98);
+      padding: 1.2em 1.4em;
+      border-bottom: 1px solid #9eb5c6;
       border-radius: 14px 14px 0 0;
       margin-bottom: 1.5em;
       position: sticky;
@@ -104,10 +110,32 @@
       backdrop-filter: blur(10px);
     }
 
+    .stats-heading {
+      background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.10));
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 10px;
+      margin-bottom: 0.9em;
+      padding: 0.75em 0.9em;
+    }
+
     .stats-title {
       color: #1f2937;
       font-size: 1.3em;
-      margin: 0 0 0.8em 0;
+      margin: 0;
+    }
+
+    .stats-body {
+      display: grid;
+      gap: 0.55em;
+    }
+
+    .stats-line {
+      font-size: 1em;
+    }
+
+    .stats-subtle {
+      color: #475569;
+      font-size: 0.9em;
     }
 
     .stats-count {
@@ -115,7 +143,7 @@
     }
 
     .table-wrap {
-      background: #c8d6df;
+      background: #d3dfea;
       overflow-x: visible;
       padding: 0 1.2em 1.2em;
     }
@@ -129,7 +157,7 @@
     }
 
     thead {
-      background: #aebfcc;
+      background: #5f7d99;
     }
 
     th {
@@ -141,9 +169,9 @@
       font-size: 0.78rem;
       font-weight: 750;
       text-transform: uppercase;
-      color: #0f172a;
+      color: #ffffff;
       letter-spacing: 0;
-      background: #aebfcc;
+      background: #5f7d99;
       border: 0;
     }
 
@@ -158,20 +186,20 @@
     td {
       padding: 0.45em 1em;
       border: 0;
-      border-bottom: 1px solid #adbfcb;
+      border-bottom: 1px solid #9eb5c6;
       color: #1f2937;
     }
 
     tr:nth-child(even) {
-      background: #cddde5;
+      background: #d5e2ec;
     }
 
     tr:nth-child(odd) {
-      background: #dce8ee;
+      background: #dce7f0;
     }
 
     tbody tr:hover {
-      background: #b8d8d4;
+      background: #b4d1ea;
     }
 
     tbody td {
@@ -201,17 +229,17 @@
       display: inline-block;
       margin: 0;
       padding: 0.34em 0.7em;
-      background: #c9d9e1;
+      background: #d6e2ec;
       color: #111827;
-      border: 1px solid #8fa9b8;
+      border: 1px solid #8fa7bb;
       box-shadow: none;
       font-size: 0.86rem;
     }
 
     .copy-btn:hover {
-      background: #b9d2db;
+      background: #c7d8e6;
       color: #0f172a;
-      border-color: #6f93a5;
+      border-color: #728ea5;
       box-shadow: none;
       transform: none;
     }
@@ -262,10 +290,6 @@
         padding: 1.2em;
       }
 
-      .stats {
-        top: 0;
-      }
-
       .table-wrap {
         overflow-x: auto;
       }
@@ -285,7 +309,7 @@
   <div class="container">
     <h1>🐦 Twitter X Unfollowers (Offline)</h1>
     <p>Select your Twitter archive files below:</p>
-    <p style="font-size: 0.9em; color: #666; margin-top: -0.5em;">
+    <p class="archive-note">
       <em>Note: Twitter/X archives only include User IDs, not handles. Click links to see profiles.</em>
     </p>
 
@@ -364,16 +388,20 @@
 
       let html = `
         <div class="stats">
-          <h2 class="stats-title">🐦 Twitter X Unfollowers (Offline)</h2>
-          <div style="font-size: 1em; margin-bottom: 0.8em;">
-            <strong>📊 Your Stats:</strong><br>
-            Following: ${following} • Followers: ${followers} • Mutual: ${mutuals}
+          <div class="stats-heading">
+            <h2 class="stats-title">🐦 Twitter X Unfollowers (Offline)</h2>
           </div>
-          <div style="font-size: 1em; margin-bottom: 0.3em;">
-            <strong>❌ Not Following Back <span class="stats-count">(${currentResults.length})</span></strong>
-          </div>
-          <div style="font-size: 0.9em; color: #666;">
-            Showing User IDs (Twitter/X no longer provides handles in archives)
+          <div class="stats-body">
+            <div class="stats-line">
+              <strong>📊 Your Stats:</strong><br>
+              Following: ${following} • Followers: ${followers} • Mutual: ${mutuals}
+            </div>
+            <div class="stats-line">
+              <strong>❌ Not Following Back <span class="stats-count">(${currentResults.length})</span></strong>
+            </div>
+            <div class="stats-subtle">
+              Showing User IDs (Twitter/X no longer provides handles in archives)
+            </div>
           </div>
         </div>
       `;
@@ -455,26 +483,16 @@
 
         // Extract account IDs
         const followerIds = new Set(followers.map(f => f.follower.accountId));
-        const followingIds = new Set(following.map(f => f.following.accountId));
 
         // Find differences
         const notFollowingBack = following.filter(
           f => !followerIds.has(f.following.accountId)
-        );
-        const youDontFollow = followers.filter(
-          f => !followingIds.has(f.follower.accountId)
         );
 
         // Sort alphabetically by screen name
         notFollowingBack.sort((a, b) => {
           const nameA = a.following.screenName || a.following.accountId;
           const nameB = b.following.screenName || b.following.accountId;
-          return nameA.localeCompare(nameB);
-        });
-
-        youDontFollow.sort((a, b) => {
-          const nameA = a.follower.screenName || a.follower.accountId;
-          const nameB = b.follower.screenName || b.follower.accountId;
           return nameA.localeCompare(nameB);
         });
 
