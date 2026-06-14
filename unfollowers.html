@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Twitter Unfollowers (Offline Tool)</title>
   <style>
+    :root {
+      --stats-height: 0px;
+    }
+
     body {
       font-family: system-ui, sans-serif;
       background: #67B26F;
@@ -93,7 +97,7 @@
       border-radius: 14px 14px 0 0;
       margin-bottom: 1.5em;
       position: sticky;
-      top: 0.75em;
+      top: 0;
       z-index: 100;
       box-shadow: 0 12px 24px rgba(15,23,42,0.10);
       backdrop-filter: blur(10px);
@@ -113,21 +117,21 @@
     }
 
     thead {
-      background: #111827;
+      background: #eef6ff;
     }
 
     th {
       position: sticky;
-      top: 8.5em;
+      top: var(--stats-height);
       z-index: 80;
       padding: 0.85em 1em;
       text-align: left;
       font-size: 0.78rem;
       font-weight: 750;
       text-transform: uppercase;
-      color: #f8fafc;
+      color: #0f172a;
       letter-spacing: 0;
-      background: #111827;
+      background: #eef6ff;
       border: 0;
     }
 
@@ -247,11 +251,7 @@
       }
 
       .stats {
-        top: 0.5em;
-      }
-
-      th {
-        top: 9.5em;
+        top: 0;
       }
 
       .table-wrap {
@@ -336,6 +336,12 @@
       document.getElementById("result").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
+    function updateStickyHeaderOffset() {
+      const stats = document.querySelector(".stats");
+      const statsHeight = stats ? stats.offsetHeight : 0;
+      document.documentElement.style.setProperty("--stats-height", `${statsHeight}px`);
+    }
+
     function renderResults() {
       const resultDiv = document.getElementById("result");
       const { followers, following, mutuals } = currentStats;
@@ -415,7 +421,10 @@
       `;
 
       resultDiv.innerHTML = html;
+      updateStickyHeaderOffset();
     }
+
+    window.addEventListener("resize", updateStickyHeaderOffset);
 
     document.getElementById("analyzeBtn").onclick = async () => {
       const followersInput = document.getElementById("followersFile");
