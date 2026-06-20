@@ -250,6 +250,47 @@
       border-color: #a7f3d0;
     }
 
+    .batch-bar {
+      padding: 0 1.2em 0.9em;
+    }
+
+    .batch-label {
+      color: #475569;
+      font-size: 0.86rem;
+      font-weight: 650;
+      margin-bottom: 0.45em;
+    }
+
+    .batch-grid {
+      display: grid;
+      gap: 0.45em;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .batch-btn {
+      background: #d6e2ec;
+      border: 1px solid #8fa7bb;
+      box-shadow: none;
+      color: #102a43;
+      margin: 0;
+      padding: 0.34em 0.5em;
+      text-align: center;
+    }
+
+    .batch-btn:hover {
+      background: #c7d8e6;
+      border-color: #728ea5;
+      box-shadow: none;
+      color: #0f172a;
+      transform: none;
+    }
+
+    .batch-btn.opened {
+      background: #b7cbdc;
+      border-color: #6f8ba3;
+      color: #102a43;
+    }
+
     .pagination {
       display: flex;
       align-items: center;
@@ -302,6 +343,10 @@
       .pagination-controls {
         margin-left: 0;
       }
+
+      .batch-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
@@ -326,6 +371,7 @@
 
   <script>
     const PAGE_SIZE = 250;
+    const OPENED_BATCHES_KEY = "twitter-x-unfollow-opened-batches";
     let currentPage = 1;
     let currentResults = [];
     let currentStats = null;
@@ -378,6 +424,65 @@
       document.documentElement.style.setProperty("--stats-height", `${statsHeight}px`);
     }
 
+    function getProfileUrl(account) {
+      return account.screenName ? `https://x.com/${account.screenName}` : `https://x.com/i/user/${account.accountId}`;
+    }
+
+    function getOpenedBatches() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem(OPENED_BATCHES_KEY) || "[]"));
+      } catch {
+        return new Set();
+      }
+    }
+
+    function getBatchKey(startIndex, endIndex) {
+      return currentResults
+        .slice(startIndex, endIndex)
+        .map(item => item.following.accountId)
+        .join("|");
+    }
+
+    function saveOpenedBatch(startIndex, endIndex) {
+      const openedBatches = getOpenedBatches();
+      openedBatches.add(getBatchKey(startIndex, endIndex));
+      localStorage.setItem(OPENED_BATCHES_KEY, JSON.stringify([...openedBatches]));
+    }
+
+    function openBatch(startIndex, endIndex) {
+      saveOpenedBatch(startIndex, endIndex);
+      currentResults.slice(startIndex, endIndex).forEach(item => {
+        window.open(getProfileUrl(item.following), "_blank", "noopener");
+      });
+      renderResults();
+    }
+
+    function renderBatchBar(start, end) {
+      const openedBatches = getOpenedBatches();
+      let html = `
+        <div class="batch-bar">
+          <div class="batch-label">Open batch</div>
+          <div class="batch-grid">
+      `;
+
+      for (let batchStart = start; batchStart < end; batchStart += 25) {
+        const batchEnd = Math.min(batchStart + 25, end);
+        const isOpened = openedBatches.has(getBatchKey(batchStart, batchEnd));
+        const openedClass = isOpened ? " opened" : "";
+        const label = isOpened ? `✓ ${batchStart + 1}-${batchEnd}` : `${batchStart + 1}-${batchEnd}`;
+        html += `
+            <button class="batch-btn${openedClass}" onclick="openBatch(${batchStart}, ${batchEnd})">${label}</button>
+        `;
+      }
+
+      html += `
+          </div>
+        </div>
+      `;
+
+      return html;
+    }
+
     function renderResults() {
       const resultDiv = document.getElementById("result");
       const { followers, following, mutuals } = currentStats;
@@ -411,6 +516,8 @@
         return;
       }
 
+      html += renderBatchBar(start, end);
+
       html += `
         <div class="pagination">
           <div>Showing ${start + 1}-${end} of ${currentResults.length} • Page ${currentPage} of ${totalPages}</div>
@@ -433,7 +540,7 @@
 
       pageItems.forEach((f, index) => {
         const acc = f.following;
-        const url = acc.screenName ? `https://x.com/${acc.screenName}` : `https://x.com/i/user/${acc.accountId}`;
+        const url = getProfileUrl(acc);
         const displayName = acc.screenName ? `@${acc.screenName}` : acc.accountId;
 
         html += `
