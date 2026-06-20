@@ -24,6 +24,8 @@ Requesting a new archive isn’t instant either, as Twitter X takes time to gene
 * ✅ **Clickable Links** – Direct links to profiles
 * ✅ **Copy URLs** – One-click copy
 * ✅ **Paginated Results** – Browse large lists in pages of 250
+* ✅ **Batch Opening** – Open visible results in 25-profile batches
+* ✅ **Opened Batch Markers** – Locally remembers which batches you opened
 * ✅ **Fast** – Handles up to 50K followers smoothly *(expected but not yet tested)*
 
 ---
@@ -75,6 +77,61 @@ You’ll see a list of accounts you follow who don’t follow you back, displaye
 
 > **Note:** Results show `User ID: 1234567890` instead of `@username` because Twitter archives only contain account IDs.
 > The links still work perfectly!
+
+---
+
+## Batch Workflow
+
+The main workflow is to open profiles in manageable batches of 25.
+
+Each results page shows up to 250 accounts and is split into batch buttons:
+
+```text
+1-25, 26-50, 51-75, ... 226-250
+```
+
+Click a batch button to open those profiles in new tabs, in the same order shown in the table.
+
+### Opened Batch Markers
+
+After a batch is opened, its button is marked with a checkmark.
+
+Opened batch markers are stored locally in your browser using the account IDs
+in that exact batch. Nothing is uploaded, synced, or shared.
+
+### Row-Level Visited Markers
+
+When a batch opens, Chrome may automatically mark the matching profile links as visited.
+
+That means individual rows can change color using the browser’s native visited-link behavior.
+This is useful for checking which profiles were already opened.
+
+### Manual Fallback
+
+The table is still available for one-by-one review.
+
+You can manually click an individual profile link or use **Copy URL** if a batch did not
+open fully, if Chrome blocked tabs, or if you only want to inspect one account.
+
+### Recommended Pacing
+
+Do not abuse batch opening.
+
+My recommendation is to open up to **8 batches** across a 24-hour period, staggered with
+breaks between sessions. Since each batch contains 25 profiles, 8 batches is 200 unfollows
+per day within X rules.
+
+A good rhythm is to open **2 batches** at a time, manually unfollow from the opened X tabs,
+then wait a large gap in minutes before repeating.
+
+### Browser Pop-Up Permission
+
+The first time you use **Open batch** in Chrome, Chrome may block the 25 profile tabs
+and show a pop-up warning near the address bar.
+
+Allow pop-ups for the local `unfollowers.html` file so batch opening can work. Other
+browsers may show a similar pop-up/tab permission prompt, but Chrome is the recommended
+browser for this workflow.
 
 > **Important:**
 >
